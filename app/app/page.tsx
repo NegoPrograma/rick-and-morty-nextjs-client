@@ -1,45 +1,55 @@
 'use client';
 
-import { Character } from "@/api-client/Character";
-import { Filters, RickAndMortyClient, Status } from "@/api-client/RickAndMortyClient";
+import { RickAndMortyClient } from "@/data-access/RickAndMortyClient";
 import CharactersGrid from "@/components/CharactersGrid/CharactersGrid";
+import DarkModeToggle from "@/components/DarkModeToggle/DarkModeToggle";
+import FilterList from "@/components/FilterList/FilterList";
 import Pagination from "@/components/Pagination/Pagination";
 import SearchBar from "@/components/SearchBar/SearchBar";
 import SideFilterOption from "@/components/SideFilterOption/SideFilterOption";
+import { Character } from "@/types/Character";
 import { useEffect, useMemo, useState } from "react";
+import { Filters } from "@/types/Filters";
 
-
+declare global {
+  interface Window {
+    tourguide;
+  }
+}
 
 export default function Home() {
 
-  let apiClient = useMemo(() => new RickAndMortyClient(), []);
+  const apiClient = useMemo(() => new RickAndMortyClient(), []);
 
   const [characters, setCharacters] = useState<Character[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
-  const [nextPageHandler, setNextPageHandler] = useState<() => void>(() => setCurrentPage((prev) => prev + 1));
-  const [previousPageHandler, setPreviousPageHandler] = useState<() => void>(() => setCurrentPage((prev) => prev - 1));
   const [input, setInput] = useState<string>("");
   const [filters, setFilters] = useState<Filters>({});
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.tourguide && localStorage.getItem('tourguide') === null) {
+      const tg = new window.tourguide.TourGuideClient();
+      tg.start();
+      localStorage.setItem('tourguide', 'true');
+    }
 
-    let timeoutId: NodeJS.Timeout;
-    
+  }, []);
+
+  useEffect(() => {
 
     if (input) {
       filters.name = input;
     }
-    setLoading((prev) => true);
+    setLoading(() => true);
 
     filters.page = currentPage;
 
-
-    timeoutId = setTimeout(async () => {
+    const timeoutId: NodeJS.Timeout = setTimeout(async () => {
 
       await apiClient.search(filters).then((data) => {
-        const characters = data?.results?.map((character: any) => new Character(character.id, character.name, character.status, character.species, character.type, character.location.name, character.image, character.origin.name));
+        const characters = data?.results?.map((character) => new Character(character.id, character.name, character.status, character.species, character.type, character.location.name, character.image, character.origin.name));
         if (characters?.length > 0) {
           setCharacters(characters);
           setTotalPages(data.info.pages);
@@ -48,10 +58,10 @@ export default function Home() {
           setTotalPages(1);
         }
 
-        setLoading((prev) => false);
+        setLoading(() => false);
       }).catch((error) => {
         console.error(error);
-        setLoading((prev) => false);
+        setLoading(() => false);
       })
     }, 500);
 
@@ -59,60 +69,105 @@ export default function Home() {
       clearTimeout(timeoutId);
     };
 
-  }, [currentPage, input, filters]);
+  }, [currentPage, input, filters, apiClient]);
 
 
   const resetFilters = useMemo(() => {
     return () => {
       setInput("");
       setFilters({});
-
-      const radioButtons = document.querySelectorAll('input[type="radio"]') as NodeListOf<HTMLInputElement>;
-      radioButtons.forEach((radio: HTMLInputElement) => {
-        radio.checked = false;
-      });
+      setCurrentPage(1);
     };
   }, []);
 
-  const statusFilterHandler = useMemo(() => (status: Status | null) => setFilters({ ...filters, status: status }), [filters]);
+
+  const filterListHandler = useMemo(() => {
+    return (filter: string, value: string | null) => {
+      setCurrentPage(1);
+      setFilters({ ...filters, [filter]: value });
+    };
+  }, [filters]);
 
   return (
-    <div className="w-full flex flex-col">
-      <div className="container mx-auto grid grid-cols-4 gap-3 mt-10">
+    <>
+      <DarkModeToggle />
+      <div className="w-[80%] flex flex-col">
 
-        <SearchBar
-          inputHandler={setInput}
-          filterHandler={statusFilterHandler}
-          resetFiltersHandler={resetFilters} />
-        <div className="w-full col-span-1">
-          <ul>
-            <SideFilterOption name="Todos os Ricks"
-              icon="https://w7.pngwing.com/pngs/255/851/png-transparent-rick-sanchez-morty-smith-sticker-playerunknown-s-battlegrounds-telegram-others-miscellaneous-white-face-thumbnail.png"
-              handler={() => setFilters({ name: "rick" })}
-            />
-            <SideFilterOption name="Todos os Mortys"
-              icon="https://e7.pngegg.com/pngimages/440/9/png-clipart-snout-sticker-forehead-rick-and-morty-face-head.png"
-              handler={() => setFilters({ name: "morty" })}
-            />
-            <SideFilterOption name="Humanos"
-              icon="https://img.icons8.com/?size=512&id=kq7FzFpkL1J5&format=png"
-              handler={() => setFilters({ species: "human" })}
-            />
-            <SideFilterOption name="Aliens" icon="https://e1.pngegg.com/pngimages/606/288/png-clipart-rick-and-morty-hq-resource-rick-and-morty-character-illustration.png"
-              handler={() => setFilters({ species: "alien" })}
-            />
+        <h1 className="text-3xl font-bold text-center mt-10 dark:text-white text-black">Rick and Morty Explorer</h1>
 
-          </ul>
-          <Pagination currentPage={currentPage}
-            totalPages={totalPages}
-            nextPage={() => setCurrentPage((prev) => prev + 1)}
-            previousPage={() => setCurrentPage((prev) => prev - 1)}
-            setPage={(page: number) => setCurrentPage(page)}
+        <div className="w-full mx-auto grid grid-cols-8 gap-3 mt-10">
+
+          <SearchBar
+            inputHandler={setInput}
+            inputState={input}
           />
-        </div>
-        <CharactersGrid characters={characters} />
-      </div>
+          <div className="w-full col-span-8 md:col-span-2"
+            data-tg-order="3"
+            data-tg-tour="Filtre os personagens por nome, espécie, gênero e status.
+            Os filtros ativos estarão destacados com a cor azul. Os filtros de gênero e status podem ser combinados (Homens + Sumiram, por exemplo), inclusive com a busca por nome e nossos 4 filtros destacados aqui.
+            No entanto, a combinação máxima de filtros é de 4 filtros. (Nome + Ricks/Mortys/Aliens/Humanos + Status + Gênero)">
+            <ul>
+              <SideFilterOption name="Ricks"
+                icon="/rick.webp"
 
-    </div>
+                handler={() => {
+
+                  if (filters.name === "rick") {
+                    setFilters({ ...filters, name: "" })
+                    return;
+                  }
+                  setFilters({ ...filters, name: "rick" })
+                }}
+              />
+              <SideFilterOption name="Mortys"
+                icon="/morty.webp"
+                handler={() => {
+
+                  if (filters.name === "morty") {
+                    setFilters({ ...filters, name: "" })
+                    return;
+                  }
+                  setFilters({ ...filters, name: "morty" })
+                }}
+              />
+              <SideFilterOption name="Humanos"
+                icon="/beth.webp"
+                handler={() => {
+
+                  if (filters.species === "human") {
+                    setFilters({ ...filters, name: "", species: "" })
+                    return;
+                  }
+                  setFilters({ ...filters, name: "", species: "human" })
+                }} />
+              <SideFilterOption name="Aliens" icon="/rap_head.webp"
+                handler={() => {
+
+                  if (filters.species === "alien") {
+                    setFilters({ ...filters, name: "" ,species: ""})
+                    return;
+                  }
+                  setFilters({ ...filters, name: "", species: "alien" })
+
+                }}
+              />
+            </ul>
+
+            <FilterList resetFiltersHandler={resetFilters} setFilterHandler={filterListHandler} />
+
+          </div>
+          <CharactersGrid loading={loading} characters={characters} />
+
+        </div>
+
+        <Pagination currentPage={currentPage}
+          totalPages={totalPages}
+          nextPage={() => setCurrentPage((prev) => prev + 1)}
+          previousPage={() => setCurrentPage((prev) => prev - 1)}
+          setPage={(page: number) => setCurrentPage(page)}
+        />
+
+      </div>
+    </>
   );
 }

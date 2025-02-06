@@ -1,34 +1,28 @@
-# Nome do serviço Docker Compose
+
 SERVICE_NAME = app
 
-# Build da imagem Docker usando Docker Compose
 build:
-	docker-compose -f docker-compose.build.yaml build
+	docker-compose build
 
-# Inicialização do container Docker usando Docker Compose
-run:
-	docker-compose -f docker-compose.build.yaml up
+front-build:
+	docker-compose run --rm $(SERVICE_NAME) npm run build
 
-# Execução de comandos dentro do container Docker usando Docker Compose
+lint:
+	docker-compose run --rm $(SERVICE_NAME) npm run lint
+
+dev:
+	docker-compose run --rm -p 3000:3000 $(SERVICE_NAME) npm run dev
+up:
+	docker-compose up -d
+
 exec:
-	docker-compose -f docker-compose.build.yaml exec $(SERVICE_NAME) /bin/sh
+	docker-compose exec $(SERVICE_NAME) /bin/sh
 
-# Parada e remoção de containers Docker usando Docker Compose
-stop:
-	docker-compose -f docker-compose.build.yaml down
+down:
+	docker-compose down
 
-# Limpeza de imagens Docker usando Docker Compose
-clean:
-	docker-compose -f docker-compose.build.yaml down --rmi all
-
-# Limpeza de containers e imagens Docker usando Docker Compose
-clean-all:
-	docker system prune -af
-
-# Exemplo de comando para rodar testes usando Docker Compose
 test:
-	docker-compose -f docker-compose.build.yaml run --rm $(SERVICE_NAME) npm test
+	docker-compose run --rm $(SERVICE_NAME) npm test
 
-# Exibição de logs usando Docker Compose
 logs:
-	docker-compose -f docker-compose.build.yaml logs -f
+	docker-compose logs -f

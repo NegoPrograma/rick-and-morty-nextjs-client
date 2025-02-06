@@ -1,4 +1,4 @@
-import { Status } from "./RickAndMortyClient";
+import { Status } from "./Status";
 
 export class Character {
 

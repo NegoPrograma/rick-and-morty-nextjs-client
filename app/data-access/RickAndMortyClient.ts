@@ -1,27 +1,4 @@
-import { Character } from "./Character";
-
-
-export enum Status {
-    Alive = "Alive",
-    Dead = "Dead",
-    Unknown = "unknown"
-}
-
-export enum Gender {
-    FEMALE = "female",
-    MALE = "male",
-    GENDERLESS = "genderless",
-    UNKNOWN = "unknown"
-}
-
-export interface Filters {
-    name?: string | null;
-    status?: Status | null;
-    species?: string | null;
-    type?: string | null;
-    gender?: Gender | null;
-    page?: number | null;
-}
+import { Filters } from "@/types/Filters";
 
 export class RickAndMortyClient {
     static instance: RickAndMortyClient;
@@ -38,6 +15,7 @@ export class RickAndMortyClient {
 
         let url = "https://rickandmortyapi.com/api/character/?";
 
+        console.log(new URLSearchParams(url).toString())
         if (filters.name) {
             url += `name=${filters.name}&`;
         }
