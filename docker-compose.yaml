@@ -1,9 +1,28 @@
 services:
   app:
     image: node:18-alpine
-    working_dir: /app/app
+    working_dir: /app
     volumes:
       - ./:/app
     ports:
       - "3000:3000"
     command: sh -c "yarn start"
+    environment:
+      - API_URL=https://rickandmortyapi.com/api/character
+  playwright:
+    build:
+      context: .
+      dockerfile: Dockerfile.testing
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      - PLAYWRIGHT_APP_URL=http://host.docker.internal:3000
+    command:  sh -c "yarn test"
+    depends_on:
+      - app
+
+networks:
+  default:
+    external: true
+    name: rickandmorty

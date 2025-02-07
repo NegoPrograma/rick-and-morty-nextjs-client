@@ -10,7 +10,7 @@ interface PaginationProps {
     setPage: (page: number) => void;
 }
 
-export default function Pagination({ currentPage, totalPages, nextPage, previousPage, setPage }: PaginationProps): JSX.Element | false {
+export default function Pagination({ currentPage, totalPages, nextPage, previousPage, setPage }: PaginationProps): JSX.Element | false | null | "" {
 
     const maxPagesToShow = 3;
 
@@ -23,7 +23,7 @@ export default function Pagination({ currentPage, totalPages, nextPage, previous
 
     const pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
 
-    return (totalPages > 1 && (
+    return ((totalPages > 1 && localStorage.getItem('tourguide')) && (
         <div className="flex items-center justify-center gap-2 mt-5 font-bold" 
         data-tg-order="5"
         data-tg-tour="Aqui você pode navegar entre as páginas de personagens encontrados na sua busca. A paginação é reiniciada a cada busca ou filtro aplicado.">
@@ -83,5 +83,5 @@ export default function Pagination({ currentPage, totalPages, nextPage, previous
                 </button>
             )}
         </div>
-    ));
+    ))
 }

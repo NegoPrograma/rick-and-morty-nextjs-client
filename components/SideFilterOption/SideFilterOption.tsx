@@ -34,9 +34,9 @@ export default function SideFilterOption({name, icon, handler}: SideFilterOption
     }
 
     return (
-        <li onClick={internalHandler} id={`${name}-side-filter`} className="side-filter w-full h-10 dark:bg-[#f4f5f5] bg-[#0d241a] dark:hover:bg-[#b7c3cf] hover:bg-[#0d151d] rounded-md flex items-center justify-between cursor-pointer mt-2 px-5">
-            <span className=" font-bold dark:text-gray-700 text-white">{name}</span>
-            <Image src={icon} alt="icon" className="w-8 h-8 ml-2 rounded-xl" />
+        <li onClick={internalHandler} id={`${name}-side-filter`} className="side-filter shadow-md w-full h-10 dark:bg-gray-800 bg-[#cad4dd] dark:text-gray-300 text-gray-700 dark:hover:bg-gray-500 hover:bg-[#34373a] hover:text-white rounded-md flex items-center justify-between cursor-pointer mt-2 px-5">
+            <span className=" font-bold ">{name}</span>
+            <Image src={icon} width={32} height={32}  alt="icon" className="ml-2 rounded-xl" />
         </li>
     );
 };

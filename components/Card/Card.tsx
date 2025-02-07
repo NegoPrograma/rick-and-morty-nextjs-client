@@ -3,7 +3,12 @@ import { Status } from "@/types/Status";
 import Image from "next/image";
 import { JSX, useState } from "react";
 
-export default function Card({ name, location, origin, status, image, type,species }: Character): JSX.Element {
+
+interface CardProps extends Character{
+    charId: number;
+}
+
+export default function Card({charId, name, location, origin, status, image, type,species }: CardProps): JSX.Element {
 
 
     const [cardTextColor,setCardTextColor] = useState<string>("text-[#a2a8af]");
@@ -67,9 +72,9 @@ export default function Card({ name, location, origin, status, image, type,speci
       }
 
     const setBackgroundColorBasedOnImage = () => {
-        const imageElement = document.getElementById(`${name}-image`) as HTMLImageElement;
+        const imageElement = document.getElementById(`${charId}-image`) as HTMLImageElement;
         const dominantColor = getDominantColor(imageElement);
-        document.getElementById(`${name}-card`)?.setAttribute("style", `background-color: ${dominantColor}`);
+        document.getElementById(`${charId}-card`)?.setAttribute("style", `background-color: ${dominantColor}`);
         setCardTextColor(setContrastTextColor(dominantColor));
     }
 
@@ -86,7 +91,7 @@ export default function Card({ name, location, origin, status, image, type,speci
 
     return (
         <div
-            id={`${name}-card`}
+            id={`${charId}-card`}
             className={`group col-span-1 h-52 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 flex flex-col items-center justify-center cursor-default`}
             style={{color: cardTextColor}}
             >
@@ -95,12 +100,16 @@ export default function Card({ name, location, origin, status, image, type,speci
             </div>
 
             <Image
+
+                width={96}
+                height={96}
+
                 src={image}
                 alt={name}
-                id={`${name}-image`}
+                id={`${charId}-image`}
                 onLoad={setBackgroundColorBasedOnImage}
                 crossOrigin="anonymous"
-                className="w-24 h-24 rounded-full mb-4 border-4 border-white mx-auto"
+                className="rounded-full mb-4 border-4 border-white mx-auto"
             />
 
 

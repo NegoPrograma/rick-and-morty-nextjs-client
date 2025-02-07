@@ -39,7 +39,7 @@ export default function DarkModeToggle(): JSX.Element {
                         <div className="block bg-gray-600 w-14 h-8 rounded-full"></div>
                         <div className="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
                     </div>
-                    <Image src="/dark_mode.webp"  alt="dark mode" className={`w-8 h-8 ml-2 ${theme == 'dark' ? 'bg-white rounded-3xl' : ''}`} />
+                    <Image src="/dark_mode.webp" width={32} height={32}  alt="dark mode" className={`ml-2 ${theme == 'dark' ? 'bg-white rounded-3xl' : ''}`} />
                 </label>
             </div>
 

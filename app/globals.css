@@ -36,3 +36,9 @@ body {
 .active span{
   color: #f8f8f8 !important;
 }
+
+.notfound {
+  width: 250px;
+  height: 250px;
+  border-radius: 100%;
+}

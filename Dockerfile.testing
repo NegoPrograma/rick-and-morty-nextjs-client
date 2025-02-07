@@ -1,0 +1,8 @@
+FROM mcr.microsoft.com/playwright:v1.46.0-jammy
+
+RUN npx playwright install chromium
+
+COPY . .
+
+CMD ["npx", "playwright", "test"]
+

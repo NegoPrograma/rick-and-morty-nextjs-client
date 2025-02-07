@@ -1,6 +1,6 @@
 'use client';
 
-import { RickAndMortyClient } from "@/data-access/RickAndMortyClient";
+import { RickAndMortyClient } from "@/services/RickAndMortyClient";
 import CharactersGrid from "@/components/CharactersGrid/CharactersGrid";
 import DarkModeToggle from "@/components/DarkModeToggle/DarkModeToggle";
 import FilterList from "@/components/FilterList/FilterList";
@@ -10,6 +10,7 @@ import SideFilterOption from "@/components/SideFilterOption/SideFilterOption";
 import { Character } from "@/types/Character";
 import { useEffect, useMemo, useState } from "react";
 import { Filters } from "@/types/Filters";
+import HealthCheck from "@/components/HealthCheck/HealthCheck";
 
 declare global {
   interface Window {
@@ -49,7 +50,7 @@ export default function Home() {
     const timeoutId: NodeJS.Timeout = setTimeout(async () => {
 
       await apiClient.search(filters).then((data) => {
-        const characters = data?.results?.map((character) => new Character(character.id, character.name, character.status, character.species, character.type, character.location.name, character.image, character.origin.name));
+        const characters = data?.results?.map((character) => new Character(character.id, character.name, character.status, character.species, character.type, character?.location?.name || 'unknown', character.image, character?.origin?.name || 'unknown'));
         if (characters?.length > 0) {
           setCharacters(characters);
           setTotalPages(data.info.pages);
@@ -60,7 +61,7 @@ export default function Home() {
 
         setLoading(() => false);
       }).catch((error) => {
-        console.error(error);
+        console.log(error)
         setLoading(() => false);
       })
     }, 500);
@@ -84,18 +85,55 @@ export default function Home() {
   const filterListHandler = useMemo(() => {
     return (filter: string, value: string | null) => {
       setCurrentPage(1);
+
+      if (value === null) {
+
+        setFilters((prev) => {
+          const newFilters = { ...prev };
+          delete newFilters[filter];
+          return newFilters;
+        });
+
+        return;
+      }
+
       setFilters({ ...filters, [filter]: value });
     };
   }, [filters]);
+
+
+  const untoggleFilter = useMemo(() => {
+    return (filter: string) => {
+
+      if (filter === "name" && ["rick", "morty"].includes(filters?.name as string)) {
+        setFilters((prev) => {
+          const newFilters = { ...prev };
+          delete newFilters.name;
+          return newFilters;
+        });
+        return;
+      }
+
+      setFilters((prev) => {
+        const newFilters = { ...prev };
+        delete newFilters[filter];
+        return newFilters;
+      }
+      );
+    };
+  }, []);
 
   return (
     <>
       <DarkModeToggle />
       <div className="w-[80%] flex flex-col">
 
-        <h1 className="text-3xl font-bold text-center mt-10 dark:text-white text-black">Rick and Morty Explorer</h1>
+        <div className="w-full flex flex-col justify-center items-center">
+          <h1 className="text-3xl font-bold text-center mt-5 dark:text-white text-black">Rick and Morty Explorer</h1>
+          <HealthCheck />
+        </div>
 
-        <div className="w-full mx-auto grid grid-cols-8 gap-3 mt-10">
+        <div className="w-full mx-auto grid grid-cols-8 gap-3 mt-1">
 
           <SearchBar
             inputHandler={setInput}
@@ -112,42 +150,58 @@ export default function Home() {
 
                 handler={() => {
 
+                  setCurrentPage(1);
                   if (filters.name === "rick") {
-                    setFilters({ ...filters, name: "" })
+                    untoggleFilter("name");
                     return;
                   }
+                  
                   setFilters({ ...filters, name: "rick" })
+                  untoggleFilter("species");
                 }}
               />
               <SideFilterOption name="Mortys"
                 icon="/morty.webp"
                 handler={() => {
 
+                  setCurrentPage(1);
                   if (filters.name === "morty") {
-                    setFilters({ ...filters, name: "" })
+                    untoggleFilter("name");
                     return;
                   }
+                  
                   setFilters({ ...filters, name: "morty" })
+                  untoggleFilter("species");
                 }}
               />
               <SideFilterOption name="Humanos"
                 icon="/beth.webp"
                 handler={() => {
 
+                  setCurrentPage(1);
+
                   if (filters.species === "human") {
-                    setFilters({ ...filters, name: "", species: "" })
+                    untoggleFilter("species");
                     return;
                   }
-                  setFilters({ ...filters, name: "", species: "human" })
+
+                 
+                  setFilters({ ...filters, species: "human" })
+                  untoggleFilter("name");
                 }} />
               <SideFilterOption name="Aliens" icon="/rap_head.webp"
                 handler={() => {
 
+                  setCurrentPage(1);
+
                   if (filters.species === "alien") {
-                    setFilters({ ...filters, name: "" ,species: ""})
+                    untoggleFilter("species");
                     return;
                   }
+
+                  
                   setFilters({ ...filters, name: "", species: "alien" })
+                  untoggleFilter("name");
 
                 }}
               />
