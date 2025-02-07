@@ -113,7 +113,7 @@ Para facilitar o gerenciamento, utilize o **Makefile**:
 make build        # Construir as imagens Docker
 make front-build  # Build da aplicação frontend
 make lint         # Rodar o linter
-make dev         # Rodar a aplicação em modo de desenvolvimento
+make dev          # Rodar a aplicação em modo de desenvolvimento
 make up           # Subir os containers
 make sh           # Acessar o container do app
 make pw-sh        # Acessar o container do Playwright
@@ -124,9 +124,20 @@ make logs         # Ver logs dos containers
 ```
 
 
-## Curiosidades
+## 🤔 Curiosidades
 
 No auge da minha sabedoria, ao executar múltiplos testes e2e, acabei caindo no rate limit
 da API. Precisei, as pressas, adaptar ao ambiente local o repositório opensource.
 
-Também tive problemas de consistencia de testing no playwright, desde conexão de rede a testes que ora passam ora não passam, mesmo sem mudança de código. E2E testing é complicado!!
+Também tive problemas de consistencia de testing no playwright, desde conexão de rede interna do docker a testes que ora passam ora não passam, mesmo sem mudança de código. E2E testing é complicado!!
+
+Me desafiei a fazer isso em 3 dias. Nunca tinha trabalhado com Next.js. Sinto que poderia ter organizado meu código melhor, principalmente na distribuição de comportamento dos componentes, usei bastante prop drilling e não gostei muito do resultado final. Se tivesse me debruçado mais sobre design patterns típicos eu teria tido um resultado superior, mas com o tempo corrido eu realmente foquei em fazer o client funcionar!
+
+
+## 🤖 Usos de IA
+
+- Sugestão de tópicos de testing após apresentar o conceito.
+- Algoritmo de dominancia de paleta de cores para apresentação dos personagens nos cards.
+- Auxilio na escrita do READ.ME (É, essa aí mesmo que você ta lendo agora)
+
+## 
