@@ -2,7 +2,10 @@
 SERVICE_NAME = app
 
 build:
-	docker compose build
+	docker compose build --no-cache
+
+install:
+	docker compose run --rm $(SERVICE_NAME) npm install
 
 front-build:
 	docker compose run --rm $(SERVICE_NAME) npm run build
