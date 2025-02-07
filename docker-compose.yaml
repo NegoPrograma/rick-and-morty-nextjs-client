@@ -1,12 +1,13 @@
 services:
   app:
-    image: node:18-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     working_dir: /app
     volumes:
       - ./:/app
     ports:
       - "3000:3000"
-    command: sh -c "yarn start"
     environment:
       - API_URL=https://rickandmortyapi.com/api/character
   playwright:

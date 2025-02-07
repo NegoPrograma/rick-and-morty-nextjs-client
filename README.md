@@ -34,15 +34,14 @@ projeto/
 ## 🚀 Como Rodar o Projeto
 
 ### **Pré-requisitos**
-Certifique-se de ter o **Docker** e **Docker Compose** instalados:
+Certifique-se de ter o **Docker** instalado e atualizado (a sessão de Makefile é baseada na disponibilidade do subcomando *compose*, que não existe em versões legacy do docker):
 ```bash
 # Verificar se o Docker está instalado
 docker -v
-# Verificar se o Docker Compose está instalado
-docker-compose -v
 ```
 
 ### **Subindo a Aplicação**
+
 Para iniciar todos os serviços:
 ```bash
 docker-compose up -d
@@ -64,16 +63,16 @@ http://localhost:3000
 ```yaml
 services:
   app:
-    image: node:18-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     working_dir: /app
     volumes:
       - ./:/app
     ports:
       - "3000:3000"
-    command: sh -c "yarn start"
     environment:
       - API_URL=https://rickandmortyapi.com/api/character
-
   playwright:
     build:
       context: .
@@ -83,9 +82,14 @@ services:
       - ./:/app
     environment:
       - PLAYWRIGHT_APP_URL=http://host.docker.internal:3000
-    command: sh -c "yarn test"
+    command:  sh -c "yarn test"
     depends_on:
       - app
+
+networks:
+  default:
+    external: true
+    name: rickandmorty
 ```
 
 - **`app`**: Roda o servidor Next.js.
@@ -94,7 +98,13 @@ services:
 - **Rede `rickandmorty`**: Define uma rede externa para comunicação entre containers. 
 
 ***OBS:*** Normalmente não seria necessário configurar a rede já que ambos serviços estão no mesmo docker compose, mas se você
-prestar atenção nas curiosidades abaixo, vai entender porque eu precisei fazer isso
+prestar atenção nas curiosidades abaixo, vai entender porque eu precisei fazer isso.
+
+***OBS 2:*** Como estamos usando uma rede nomeada, certifique-se de rodar o comando abaixo caso encontre problemas relacionados
+a existência da rede.
+```
+docker network create rickandmorty
+```
 
 
 ---

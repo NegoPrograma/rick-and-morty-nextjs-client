@@ -28,7 +28,7 @@ down:
 	docker compose down
 
 test:
-	docker compose run --rm playwright yarn test
+	docker compose run --rm playwright npm test
 
 logs:
 	docker compose logs -f
