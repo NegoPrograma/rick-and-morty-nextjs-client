@@ -4,8 +4,6 @@ services:
       context: .
       dockerfile: Dockerfile.prod
     working_dir: /app
-    volumes:
-      - ./:/app
     ports:
       - "3000:3000"
     environment:
