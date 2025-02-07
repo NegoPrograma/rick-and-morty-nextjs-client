@@ -1,6 +1,6 @@
 # Rick and Morty Explorer 🚀
 
-Este projeto é uma web api client para a [Rick and Morty API](https://github.com/afuh/rick-and-morty-api) chamada **Rick and Morty Explorer**, que permite aos usuários buscar personagens, filtrar por atributos e navegar entre os resultados paginados. O projeto utiliza **Next.js**, **Node.js**, **MongoDB** e **Playwright** para testes.
+Este projeto é uma web api client para a [Rick and Morty API](https://github.com/afuh/rick-and-morty-api) chamada **Rick and Morty Explorer**, que permite aos usuários buscar personagens, filtrar por atributos e navegar entre os resultados paginados. O projeto utiliza **Next.js**, **Node.js**, e **Playwright** para testes.
 
 ![Logo](.github/home.png)
 
@@ -91,18 +91,24 @@ services:
 - **`app`**: Roda o servidor Next.js.
 - **`playwright`**: Executa os testes Playwright.
 - **`API_URL`**: Define a API do Rick and Morty como fonte de dados.
-- **Rede `rickandmorty`**: Define uma rede externa para comunicação entre containers.
+- **Rede `rickandmorty`**: Define uma rede externa para comunicação entre containers. 
+
+***OBS:*** Normalmente não seria necessário configurar a rede já que ambos serviços estão no mesmo docker compose, mas se você
+prestar atenção nas curiosidades abaixo, vai entender porque eu precisei fazer isso
+
 
 ---
 
 ## 🧪 Executando Testes com Playwright
 Para rodar os testes Playwright:
 ```bash
-docker-compose run --rm playwright
+docker compose run --rm playwright yarn test
 ```
-Para depuração:
+
+Ou, se você tiver acesso ao *make*:
+
 ```bash
-docker exec -it playwright bash
+make test
 ```
 
 ## 🛠 Uso do Makefile
@@ -110,14 +116,14 @@ Para facilitar o gerenciamento, utilize o **Makefile**:
 
 ### **Comandos úteis**
 ```bash
-make build        # Construir as imagens Docker
+make build        # Build  das imagens Docker
 make front-build  # Build da aplicação frontend
 make lint         # Rodar o linter
 make dev          # Rodar a aplicação em modo de desenvolvimento
 make up           # Subir os containers
 make sh           # Acessar o container do app
 make pw-sh        # Acessar o container do Playwright
-make pw-build     # Construir o container Playwright
+make pw-build     # Buildar o container Playwright
 make down         # Parar e remover os containers
 make test         # Rodar testes Playwright
 make logs         # Ver logs dos containers
@@ -127,7 +133,7 @@ make logs         # Ver logs dos containers
 ## 🤔 Curiosidades
 
 No auge da minha sabedoria, ao executar múltiplos testes e2e, acabei caindo no rate limit
-da API. Precisei, as pressas, adaptar ao ambiente local o repositório opensource.
+da API. Precisei, as pressas, adaptar ao ambiente local o repositório opensource, configurar o mesmo para docker (server e DB), simplesmente pra poder rodar os testes de novo!
 
 Também tive problemas de consistencia de testing no playwright, desde conexão de rede interna do docker a testes que ora passam ora não passam, mesmo sem mudança de código. E2E testing é complicado!!
 
@@ -139,5 +145,3 @@ Me desafiei a fazer isso em 3 dias. Nunca tinha trabalhado com Next.js. Sinto qu
 - Sugestão de tópicos de testing após apresentar o conceito.
 - Algoritmo de dominancia de paleta de cores para apresentação dos personagens nos cards.
 - Auxilio na escrita do READ.ME (É, essa aí mesmo que você ta lendo agora)
-
-## 
