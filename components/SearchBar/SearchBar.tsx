@@ -4,10 +4,12 @@ import { JSX } from "react";
 
 interface SearchBarProps {
     inputState: string,
-    inputHandler: (input: string) => void,
+    setInput: Function
 }
 
-export default function SearchBar({ inputHandler, inputState }: SearchBarProps): JSX.Element {
+export default function SearchBar({ setInput, inputState }: SearchBarProps): JSX.Element {
+
+
 
     return (
         <div 
@@ -17,7 +19,8 @@ export default function SearchBar({ inputHandler, inputState }: SearchBarProps):
         
         className="w-full col-span-8 flex">
             <div className="w-full flex flex-col">
-                <input className=" block w-full h-10 rounded-md pl-2 bg-[#cad4dd] hover:bg-[#b7c3cf]  border-s-[#8e9194] " type="text" placeholder="Quem você procura?" value={inputState} onChange={(e) => inputHandler(e.target.value)} />
+                <input className=" block w-full h-10 rounded-md pl-2 bg-[#cad4dd] hover:bg-[#b7c3cf]  border-s-[#8e9194] " type="text" placeholder="Quem você procura?"
+                 value={inputState} onChange={(e) => setInput((prev) => e.target.value ? e.target.value : " ")} /> {/*using space to force a rerender*/}
             </div>
         </div>
     );

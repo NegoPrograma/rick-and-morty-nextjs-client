@@ -136,7 +136,7 @@ export default function Home() {
         <div className="w-full mx-auto grid grid-cols-8 gap-3 mt-1">
 
           <SearchBar
-            inputHandler={setInput}
+            setInput={setInput}
             inputState={input}
           />
           <div className="w-full col-span-8 md:col-span-2"

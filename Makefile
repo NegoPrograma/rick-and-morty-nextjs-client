@@ -14,7 +14,7 @@ lint:
 	docker compose run --rm $(SERVICE_NAME) npm run lint
 
 dev:
-	docker compose run --rm -p 3000:3000 $(SERVICE_NAME) npm run dev
+	docker compose -f docker-compose.dev.yaml up -d $(SERVICE_NAME)
 
 up:
 	docker compose up -d

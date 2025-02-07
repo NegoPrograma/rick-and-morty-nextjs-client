@@ -1,0 +1,16 @@
+services:
+  app:
+    image: node:18-alpine 
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - API_URL=https://rickandmortyapi.com/api/character
+    command: sh -c "yarn install --immutable && yarn dev"
+
+networks:
+  default:
+    external: true
+    name: rickandmorty
